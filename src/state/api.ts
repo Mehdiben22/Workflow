@@ -60,6 +60,13 @@ export interface Task {
   attachments?: Attachment[];
 }
 
+export interface Team {
+  teamId : number;
+  teamName : string;
+  productOwnerUserId? : number;
+  projectManagerUserId? : number;
+}
+
 export interface SearchResults {
   tasks? : Task[];
   projects? : Project[];
@@ -70,7 +77,7 @@ export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL }),
   reducerPath: "api",
   //after fetching data on the front we gonna have some data thats the tag of the data
-  tagTypes: ["Projects", "Tasks"],
+  tagTypes: ["Projects", "Tasks","Users","Teams"],
   endpoints: (build) => ({
     //getting the projects call api
     getProjects: build.query<Project[], void>({
@@ -128,6 +135,14 @@ export const api = createApi({
             {type : "Tasks" , id:taskId},
         ],
       }),
+      getUsers : build.query<User[], void>({
+        query: () => "users",
+        providesTags : ["Users"]
+      }),
+      getTeams : build.query<Team[] , void>({
+        query : () => "teams",
+        providesTags : ["Teams"]
+      }),
       search : build.query<SearchResults, string>({
         //this query is from the searchController
         query : (query) => `search?query=${query}`,
@@ -135,4 +150,4 @@ export const api = createApi({
   }),
 });
 
-export const { useGetProjectsQuery, useCreateProjectMutation , useGetTasksQuery , useCreateTaskMutation, useUpdateTaskStatusMutation , useSearchQuery, } = api;
+export const { useGetProjectsQuery, useCreateProjectMutation , useGetTasksQuery , useCreateTaskMutation, useUpdateTaskStatusMutation , useSearchQuery, useGetUsersQuery , useGetTeamsQuery } = api;
