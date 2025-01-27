@@ -109,6 +109,19 @@ export const api = createApi({
           ? result.map(({ id }) => ({ type: "Tasks" as const, id }))
           : [{ type: "Tasks" as const }],
     }),
+    //getting tasks by user , number in this case refear to userId
+    getTasksByUser: build.query<Task[], number>({
+      query: (userId) => `tasks/user/${userId}`,
+      //result is the data returned by the api (list of tasks)
+      //the input parameter passed to the query function (userId)
+      providesTags : (result, error, userId) => result
+      //if result is available it returns an array of tasks and for each task 
+      //have an object id
+      ? result.map(({id}) => ({type : "Tasks", id}))
+      //else if no result returned the cache still aware of the userId and 
+      //can hanle future updates
+      : [{type: "Tasks" , id:userId}]
+    }),
     //create a Tasks need a post method
     createTask: build.mutation<Task, Partial<Task>>({
         query: (tasks) => ({
@@ -150,4 +163,4 @@ export const api = createApi({
   }),
 });
 
-export const { useGetProjectsQuery, useCreateProjectMutation , useGetTasksQuery , useCreateTaskMutation, useUpdateTaskStatusMutation , useSearchQuery, useGetUsersQuery , useGetTeamsQuery } = api;
+export const { useGetProjectsQuery, useCreateProjectMutation , useGetTasksQuery , useCreateTaskMutation, useUpdateTaskStatusMutation , useSearchQuery, useGetUsersQuery , useGetTeamsQuery , useGetTasksByUserQuery } = api;
